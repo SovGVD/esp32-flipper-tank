@@ -5,9 +5,11 @@ float mapf(float val, float in_min, float in_max, float out_min, float out_max) 
 void disableControl()
 {
   CONTROL_ENABLED = false;
+  cliSerial->println("Control disabled");
 }
 
 void enableControl()
 {
   CONTROL_ENABLED = true;
+  cliSerial->println("Control enabled");
 }

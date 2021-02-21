@@ -33,11 +33,26 @@ void HAL_doMove()
    *  *standby - no power on motor
    *  *brake   - stuck motor
    */
-   analogWrite(LEFT_MOTOR1_PIN, leftMotor > 0 ? leftMotor*MAX_SPEED*-1 : 0);
-   analogWrite(LEFT_MOTOR2_PIN, leftMotor < 0 ? leftMotor*MAX_SPEED    : 0);
 
-   analogWrite(RIGHT_MOTOR1_PIN, rightMotor > 0 ? rightMotor*MAX_SPEED*-1 : 0);
-   analogWrite(RIGHT_MOTOR2_PIN, rightMotor < 0 ? rightMotor*MAX_SPEED    : 0);
+   float LM1 = leftMotor > 0.0 ? leftMotor*MAX_SPEED      : 0.0;
+   float LM2 = leftMotor < 0.0 ? leftMotor*MAX_SPEED*-1.0 : 0.0;
+
+   float RM1 = rightMotor > 0.0 ? rightMotor*MAX_SPEED      : 0.0;
+   float RM2 = rightMotor < 0.0 ? rightMotor*MAX_SPEED*-1.0 : 0.0;
+
+   cliSerial->print(LM1);
+   cliSerial->print(" ");
+   cliSerial->print(LM2);
+   cliSerial->print(" ");
+   cliSerial->print(RM1);
+   cliSerial->print(" ");
+   cliSerial->println(RM2);
+
+   leftMotor1.writeScaled(LM1);
+   leftMotor2.writeScaled(LM2);
+
+   rightMotor1.writeScaled(RM1);
+   rightMotor2.writeScaled(RM2);
 }
 
 
@@ -55,6 +70,6 @@ uint16_t HAL_angleToMs(double angle)
 }
 
 void HAL_doServos(){
-  leftFlipper.writeMicroseconds(HAL_angleToMs(leftFlipperAng));
-  rightFlipper.writeMicroseconds(HAL_angleToMs(rightFlipperAng));
+  leftFlipper.write(leftFlipperAng);
+  rightFlipper.write(rightFlipperAng);
 }

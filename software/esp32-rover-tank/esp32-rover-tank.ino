@@ -1,7 +1,7 @@
 /**
  * TODO:
  *  - [x] low voltage to 10V
- *  - [ ] one module per motor
+ *  - [x] one module per motor
  *  - [ ] heatsink somehow
  */
 
@@ -14,6 +14,7 @@
 #include "cli.h"
 #include "config_wifi.h"
 #include "WiFi.h"
+#include <DNSServer.h>
 #include "ESPAsyncWebServer.h"
 #include "web/index.html.gz.h"
 
@@ -54,7 +55,16 @@ uint8_t FS_WS_count = 0;
 bool invert  = false;
 bool enabled = true;
 
+// PWM settings
+int PWMfreq = 10000;
+
 // Init hardware
+ESP32PWM leftMotor1;
+ESP32PWM leftMotor2;
+
+ESP32PWM rightMotor1;
+ESP32PWM rightMotor2;
+
 Servo leftFlipper;
 Servo rightFlipper;
 int leftFlipperAng  = 90;
@@ -64,6 +74,7 @@ int rightFlipperAng = 90;
 // WebServer
 bool clientOnline = false;
 IPAddress WiFiIP;
+DNSServer dnsServer;
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
@@ -80,10 +91,8 @@ void setup() {
   setupTof(LEFT);
   setupTof(RIGHT);
 
-  //init flippers servos
-  leftFlipper.attach(LEFT_FLIPPER);
-  rightFlipper.attach(RIGHT_FLIPPER);
-  
+
+
 
   // init WiFi access point
   WiFi.mode(WIFI_AP);
@@ -94,6 +103,30 @@ void setup() {
   cliSerial->println();
 
   initWebServer();
+
+  dnsServer.start(53, "*", WiFiIP); // this force all request goes to EPS32 (captive portal)... and it does not work =(
+
+
+  // Init ESP32Servo
+  // Allow allocation of all timers
+  ESP32PWM::allocateTimer(0);
+  ESP32PWM::allocateTimer(1);
+  ESP32PWM::allocateTimer(2);
+  ESP32PWM::allocateTimer(3);
+
+  //init flippers servos
+  leftFlipper.attach(LEFT_FLIPPER);
+  leftFlipper.setPeriodHertz(50);
+  rightFlipper.attach(RIGHT_FLIPPER);
+  rightFlipper.setPeriodHertz(50);
+
+  // Init motor pins
+  leftMotor1.attachPin(LEFT_MOTOR1_PIN, PWMfreq);
+  leftMotor2.attachPin(LEFT_MOTOR2_PIN, PWMfreq);
+
+  rightMotor1.attachPin(RIGHT_MOTOR1_PIN, PWMfreq);
+  rightMotor2.attachPin(RIGHT_MOTOR2_PIN, PWMfreq);
+
   delay(1000);
   cliSerial->println("Go");
 }

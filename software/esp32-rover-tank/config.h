@@ -14,7 +14,7 @@
 #define RIGHT_MOTOR2_PIN 19
 
 // Speed
-#define MAX_SPEED 255   // max is 255
+#define MAX_SPEED 1.0   // [0.0f ... 1,0f]
 
 //CLI
 #define CLI_BUFFER_LENGTH 126
@@ -24,7 +24,7 @@
 #define TOFADDR 0x29
 
 // servos
-#define LEFT_FLIPPER  34
-#define RIGHT_FLIPPER 34
+#define LEFT_FLIPPER  23
+#define RIGHT_FLIPPER 4
 #define SERVO_MIN 1000
 #define SERVO_MAX 2000
