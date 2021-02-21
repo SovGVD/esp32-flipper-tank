@@ -11,6 +11,7 @@
 
 #include "def.h"
 #include "config.h"
+#include "flipper.h"
 #include "cli.h"
 #include "config_wifi.h"
 #include "WiFi.h"
@@ -65,10 +66,8 @@ ESP32PWM leftMotor2;
 ESP32PWM rightMotor1;
 ESP32PWM rightMotor2;
 
-Servo leftFlipper;
-Servo rightFlipper;
-int leftFlipperAng  = 90;
-int rightFlipperAng = 90;
+// ToF and flippers
+flipper fl[2] = {};
 
 // WiFi
 // WebServer
@@ -88,10 +87,6 @@ void setup() {
 
   //init i2c
   Wire.begin();
-  setupTof(LEFT);
-  setupTof(RIGHT);
-
-
 
 
   // init WiFi access point
@@ -114,11 +109,9 @@ void setup() {
   ESP32PWM::allocateTimer(2);
   ESP32PWM::allocateTimer(3);
 
-  //init flippers servos
-  leftFlipper.attach(LEFT_FLIPPER);
-  leftFlipper.setPeriodHertz(50);
-  rightFlipper.attach(RIGHT_FLIPPER);
-  rightFlipper.setPeriodHertz(50);
+  //init flippers
+  setupFlipper(LEFT);
+  setupFlipper(RIGHT);
 
   // Init motor pins
   leftMotor1.attachPin(LEFT_MOTOR1_PIN, PWMfreq);
@@ -170,4 +163,13 @@ void doFlippers()
     getToF(RIGHT);
     if (CONTROL_ENABLED) updateFlippers();  
     HAL_doServos();
+}
+
+void failLoop()
+{
+  while(1) {
+    if (CLI_get(CLI_BUFFER)){
+      CLI_doCommand();
+    }
+  }
 }

@@ -1,9 +1,10 @@
-#define CLI_COMMANDS 3
+#define CLI_COMMANDS 4
 
 const cliCommand cliCommands[CLI_COMMANDS] = {
   { "help",      cliHelp     , 0},
   { "hal",       cliHal      , 0},
-  { "flippers",  cliFlippers , 2}
+  { "flippers",  cliFlippers , 2},
+  { "i2cscan",   cliI2cScan  , 0}
 };
 
 bool CLI_get(char * CLI_BUFFER)

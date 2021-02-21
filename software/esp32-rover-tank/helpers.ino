@@ -13,3 +13,11 @@ void enableControl()
   CONTROL_ENABLED = true;
   cliSerial->println("Control enabled");
 }
+
+void i2cSelect(uint8_t id) {
+  if (id > 7) return;
+ 
+  Wire.beginTransmission(TCAADDR);
+  Wire.write(1 << id);
+  Wire.endTransmission();  
+}
